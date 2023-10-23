@@ -1,7 +1,48 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import Image from "next/image";
+import styles from "./page.module.css";
+import useFcmToken from "@/utils/hooks/useFcmToken";
+import { useEffect } from "react";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import firebaseApp, { messaging } from "@/utils/firebase";
 
 export default function Home() {
+  const { fcmToken, notificationPermissionStatus } = useFcmToken();
+  // Use the token as needed
+  fcmToken && console.log("FCM token:", fcmToken);
+
+  // async function requestPermission() {
+  //   const permission = await Notification.requestPermission();
+  //   if (permission === "granted") {
+  //     // Generate Token
+  //     const token = await getToken(messaging, {
+  //       vapidKey:
+  //         "BE17Baiu7bk_nPls8NedR2w6XTO8_U7iMHCbbBq-K-QCFkMV0gnwLACJXhTWkr4agHHqS0UQOmWdBBfcWxFSam8",
+  //     });
+
+  //     console.log("Token Gen", token);
+  //     // Send this token  to server ( db)
+  //   } else if (permission === "denied") {
+  //     alert("You denied for the notification");
+  //   }
+  // }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  // useEffect(() => {
+  // if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  //   const messaging = getMessaging(firebaseApp);
+  //   const unsubscribe = onMessage(messaging, (payload) => {
+  //     console.log("Foreground push notification received:", payload);
+  //     // Handle the received push notification while the app is in the foreground
+  //     // You can display a notification or update the UI based on the payload
+  //   });
+  //   return () => {
+  //     unsubscribe(); // Unsubscribe from the onMessage event
+  //   };
+  // }
+  // requestPermission();
+  // }, []);
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -15,7 +56,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -91,5 +132,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
