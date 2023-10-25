@@ -1,136 +1,116 @@
 "use client";
-import Image from "next/image";
+import { auth, provider } from "@/utils/firebase";
 import styles from "./page.module.css";
 import useFcmToken from "@/utils/hooks/useFcmToken";
-import { useEffect } from "react";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
-import firebaseApp, { messaging } from "@/utils/firebase";
+import { signInWithPopup } from "firebase/auth";
 
 export default function Home() {
   const { fcmToken, notificationPermissionStatus } = useFcmToken();
   // Use the token as needed
   fcmToken && console.log("FCM token:", fcmToken);
 
-  // async function requestPermission() {
-  //   const permission = await Notification.requestPermission();
-  //   if (permission === "granted") {
-  //     // Generate Token
-  //     const token = await getToken(messaging, {
-  //       vapidKey:
-  //         "BE17Baiu7bk_nPls8NedR2w6XTO8_U7iMHCbbBq-K-QCFkMV0gnwLACJXhTWkr4agHHqS0UQOmWdBBfcWxFSam8",
-  //     });
+  //sign in with google
+  // const handleSignIn = () => {
+  //   signInWithPopup(auth, provider).then((result) => {
+  //     console.log(result?._tokenResponse?.oauthAccessToken);
 
-  //     console.log("Token Gen", token);
-  //     // Send this token  to server ( db)
-  //   } else if (permission === "denied") {
-  //     alert("You denied for the notification");
-  //   }
-  // }
+  //     if (result?.user) {
+  //       axios
+  //         .post(
+  //           "https://fcm.googleapis.com//v1/projects/push-notification-c53a1/messages:send",
+  //           {
+  //             message: {
+  //               token:
+  //                 "enfOxRNJbpNnL1KcIWA99b:APA91bEw2a6fkpo6ntB70aP5b99ccILkz2FEb0SLbFsDw7YBhj3r3gB6oGziFyL4DGr7T0TfrEbpsve-CEbFedzsdcILmNnZ2nR7nfTODJyng7ZhMs7sGxb5LC5JI6JaibuomBc7EEYQ",
+  //               notification: {
+  //                 title: "FCM Message",
+  //                 body: "This is a message from FCM",
+  //               },
+  //               webpush: {
+  //                 headers: {
+  //                   Urgency: "high",
+  //                 },
+  //                 notification: {
+  //                   body: "This is a message from FCM to web",
+  //                   requireInteraction: "true",
+  //                   badge: "/badge-icon.png",
+  //                 },
+  //               },
+  //             },
+  //           },
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${result?._tokenResponse?.oauthAccessToken}`, // Set the Bearer token in the Authorization header
+  //               "Content-Type": "application/json",
+  //             },
+  //           }
+  //         )
+  //         .then((response) => {
+  //           // Handle the response data here
+  //           // console.log(response);
+  //         })
+  //         .catch((error) => {
+  //           console.error("Axios error:", error);
+  //         });
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // useEffect(() => {
-  // if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-  //   const messaging = getMessaging(firebaseApp);
-  //   const unsubscribe = onMessage(messaging, (payload) => {
-  //     console.log("Foreground push notification received:", payload);
-  //     // Handle the received push notification while the app is in the foreground
-  //     // You can display a notification or update the UI based on the payload
+  //       // fetch(
+  //       //   "https://fcm.googleapis.com//v1/projects/push-notification-c53a1/messages:send",
+  //       //   {
+  //       //     mode: "no-cors",
+  //       //     method: "POST",
+  //       //     headers: {
+  //       //       Authorization: `Bearer ${result?.user?.accessToken}`,
+  //       //       "Content-Type": "application/json",
+  //       //     },
+  //       //     body: JSON.stringify({
+  //       //       message: {
+  //       //         token:
+  //       //           "enfOxRNJbpNnL1KcIWA99b:APA91bEw2a6fkpo6ntB70aP5b99ccILkz2FEb0SLbFsDw7YBhj3r3gB6oGziFyL4DGr7T0TfrEbpsve-CEbFedzsdcILmNnZ2nR7nfTODJyng7ZhMs7sGxb5LC5JI6JaibuomBc7EEYQ",
+  //       //         notification: {
+  //       //           title: "FCM Message test",
+  //       //           body: "This is a message from FCM123143",
+  //       //         },
+  //       //         webpush: {
+  //       //           headers: {
+  //       //             Urgency: "high",
+  //       //           },
+  //       //         },
+  //       //       },
+  //       //     }),
+  //       //   }
+  //       // )
+  //       //   .then((response) => {
+  //       //     if (!response.ok) {
+  //       //       throw new Error("Network response was not ok");
+  //       //     }
+  //       //     return response.json();
+  //       //   })
+  //       //   .then((data) => {
+  //       //     // Handle the response data here
+  //       //   })
+  //       //   .catch((error) => {
+  //       //     console.error("Fetch error:", error);
+  //       //   });
+  //     }
   //   });
-  //   return () => {
-  //     unsubscribe(); // Unsubscribe from the onMessage event
-  //   };
-  // }
-  // requestPermission();
-  // }, []);
+  // };
 
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div>
+      <h1 className={styles.title}>Push Notification Test</h1>
+      <p>
+        Notification permission status:{" "}
+        <strong>{notificationPermissionStatus}</strong>
+      </p>
+      <div>
+        Firebase Cloud Messaging(FCM) token:
+        <hr />
+        <br /> {fcmToken} <br />
+        <br />
+        <hr />
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      {/* <button onClick={() => handleSignIn()}>Sign in with google</button> */}
+    </div>
   );
 }

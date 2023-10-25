@@ -1,7 +1,4 @@
 // eslint-disable-next-line no-undef
-// importScripts("https://www.gstatic.com/firebasejs/8.8.0/firebase-app.js");
-// // eslint-disable-next-line no-undef
-// importScripts("https://www.gstatic.com/firebasejs/8.8.0/firebase-messaging.js");
 importScripts(
   "https://www.gstatic.com/firebasejs/9.9.1/firebase-app-compat.js"
 );
@@ -23,15 +20,47 @@ firebase.initializeApp(firebaseConfig);
 // eslint-disable-next-line no-undef
 const messaging = firebase.messaging();
 
+// click on notification
+self.addEventListener("notificationclick", function (event) {
+  console.log(event);
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+
+//set notification
 messaging.onBackgroundMessage((payload) => {
   console.log(
     "[firebase-messaging-sw.js] Received background message ",
     payload
   );
-  const notificationTitle = payload.notification.title;
+  // const notificationTitle = payload.notification.title;
+  // const notificationOptions = {
+  //   body: payload.notification.body,
+
+  //   icon: "./next.svg",
+  //   data: {
+  //     url: payload.data.openURL,
+  //   },
+  // };
+  // self.registration.showNotification(notificationTitle, notificationOptions);
+
+  const notification = payload.data;
+  if (!notification) {
+    console.warn(
+      "[firebase-messaging-sw.js] Unknown notification on message ",
+      payload
+    );
+    return;
+  }
+
+  // Customize notification here
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: "./logo.png",
+    ...notification,
+    data: {
+      url: payload.data.openURL,
+    },
+    // icon: '/img/icons/favicon-32x32.png'
   };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+
+  self.registration.showNotification(notification.title, notificationOptions);
 });
