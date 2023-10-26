@@ -51,7 +51,7 @@ export default function Home() {
 
             // When your app is in the foreground (the user is currently viewing your web page), you can receive data and notification payloads directly in the page
             onMessage(messaging, (payload) => {
-              console.log("Foreground Message received. ", payload);
+              console.log("foreground Message received. ", payload);
               // ...
             });
 

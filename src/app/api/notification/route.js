@@ -54,7 +54,7 @@ export async function POST(req, res) {
 
   // Send the FCM message
 
-  await getMessaging()
+  getMessaging()
     .send(message)
     .then((response) => {
       console.log("Successfully sent message:", response);
