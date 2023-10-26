@@ -1,11 +1,8 @@
 // eslint-disable-next-line no-undef
+importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.9.1/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
 );
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.9.1/firebase-messaging-compat.js"
-);
-
 const firebaseConfig = {
   apiKey: "AIzaSyBcBoJt64kLa-s0qty9CbnfKlyr16lmg1E",
   authDomain: "push-notification-c53a1.firebaseapp.com",
@@ -22,7 +19,6 @@ const messaging = firebase.messaging();
 
 // click on notification
 self.addEventListener("notificationclick", function (event) {
-  console.log(event);
   event.notification.close();
   event.waitUntil(clients.openWindow(event.notification.data.url));
 });
@@ -33,6 +29,7 @@ messaging.onBackgroundMessage((payload) => {
     "[firebase-messaging-sw.js] Received background message ",
     payload
   );
+  self.registration.update();
   // const notificationTitle = payload.notification.title;
   // const notificationOptions = {
   //   body: payload.notification.body,
