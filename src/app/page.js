@@ -1,10 +1,22 @@
 "use client";
-import { isSupported } from "firebase/messaging";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
 // import { auth, provider } from "@/utils/firebase";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
+import { initializeApp } from "firebase/app";
 // import useFcmToken from "@/utils/hooks/useFcmToken";
 // import { signInWithPopup } from "firebase/auth";
+
+//////////////////////////test here//////////////////////////
+const firebaseConfig = {
+  apiKey: "AIzaSyBcBoJt64kLa-s0qty9CbnfKlyr16lmg1E",
+  authDomain: "push-notification-c53a1.firebaseapp.com",
+  projectId: "push-notification-c53a1",
+  storageBucket: "push-notification-c53a1.appspot.com",
+  messagingSenderId: "542544547876",
+  appId: "1:542544547876:web:5d7266f6216bbb3c14c8b1",
+  measurementId: "G-WSBW67005R",
+};
 
 export default function Home() {
   const [deviceToken, setdeviceToken] = useState(null);
@@ -16,12 +28,31 @@ export default function Home() {
         if (permission === "granted") {
           const hasFirebaseMessagingSupport = await isSupported();
           if (hasFirebaseMessagingSupport) {
-            const { requestForToken } = await import(
-              "../utils/cloud-notification/firebase"
-            );
-            const fcmToken = await requestForToken();
+            const firebaseApp = initializeApp(firebaseConfig);
+            const messaging = getMessaging(firebaseApp);
+            // const { requestForToken } = await import(
+            //   "../utils/cloud-notification/firebase"
+            // );
+            // const { registerToken } = await import("../utils/firebase");
+            // // const fcmToken = await requestForToken();
+            // const fcmToken = await registerToken();
 
-            setdeviceToken(fcmToken);
+            const registerToken = async (messaging) => {
+              try {
+                const currentToken = await getToken(messaging, {
+                  vapidKey:
+                    "BC2p1ft9yE8FIUJvUSOwTz4MMFZROoHEhPY0_83Dzfw9W7QvmOr4ueIYvB3fnXduzGkCfqLB6L0vX_p1DxV_Bw4",
+                });
+
+                return { token: currentToken };
+              } catch (error) {
+                // Failed to execute 'subscribe' on 'PushManager': Subscription failed - no active Service Worker
+                return { error };
+              }
+            };
+            const { token } = await registerToken(messaging);
+
+            setdeviceToken(token);
           }
         }
       }
