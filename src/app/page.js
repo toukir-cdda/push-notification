@@ -50,8 +50,9 @@ export default function Home() {
                 return { error };
               }
             };
-            const { token } = await registerToken(messaging);
 
+            const { token } = await registerToken(messaging);
+            console.log("token : ", token);
             setdeviceToken(token);
           }
         }
