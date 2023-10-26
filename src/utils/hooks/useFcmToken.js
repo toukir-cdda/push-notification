@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMessaging, getToken } from "firebase/messaging";
+import { getMessaging, getToken, isSupported } from "firebase/messaging";
 import firebaseApp from "../firebase";
 
 const useFcmToken = () => {

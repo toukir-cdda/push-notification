@@ -1,13 +1,35 @@
 "use client";
-import { auth, provider } from "@/utils/firebase";
+import { isSupported } from "firebase/messaging";
+// import { auth, provider } from "@/utils/firebase";
 import styles from "./page.module.css";
-import useFcmToken from "@/utils/hooks/useFcmToken";
-import { signInWithPopup } from "firebase/auth";
+import { useEffect, useState } from "react";
+// import useFcmToken from "@/utils/hooks/useFcmToken";
+// import { signInWithPopup } from "firebase/auth";
 
 export default function Home() {
-  const { fcmToken, notificationPermissionStatus } = useFcmToken();
+  const [deviceToken, setdeviceToken] = useState(null);
+  useEffect(() => {
+    (async () => {
+      if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+        const permission = await Notification.requestPermission();
+
+        if (permission === "granted") {
+          const hasFirebaseMessagingSupport = await isSupported();
+          if (hasFirebaseMessagingSupport) {
+            const { requestForToken } = await import(
+              "../utils/cloud-notification/firebase"
+            );
+            const fcmToken = await requestForToken();
+
+            setdeviceToken(fcmToken);
+          }
+        }
+      }
+    })();
+  }, []);
+  // const { fcmToken, notificationPermissionStatus } = useFcmToken();
   // Use the token as needed
-  fcmToken && console.log("FCM token:", fcmToken);
+  // fcmToken && console.log("FCM token:", fcmToken);
 
   //sign in with google
   // const handleSignIn = () => {
@@ -100,12 +122,12 @@ export default function Home() {
       <h1 className={styles.title}>Push Notification Test</h1>
       <p>
         Notification permission status:{" "}
-        <strong>{notificationPermissionStatus}</strong>
+        {/* <strong>{notificationPermissionStatus}</strong> */}
       </p>
       <div>
         Firebase Cloud Messaging(FCM) token:
         <hr />
-        <br /> {fcmToken} <br />
+        <br /> {deviceToken} <br />
         <br />
         <hr />
       </div>
