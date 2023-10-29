@@ -5,6 +5,8 @@ import {
   isSupported,
   onMessage,
 } from "firebase/messaging";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import { auth, provider } from "@/utils/firebase";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
@@ -23,6 +25,16 @@ const firebaseConfig = {
   appId: "1:542544547876:web:5d7266f6216bbb3c14c8b1",
   measurementId: "G-WSBW67005R",
 };
+
+function ToastDisplay({ payload }) {
+  console.log("payload in toast display", payload);
+  return (
+    <div>
+      <h1>{payload?.data?.title}</h1>
+      <p>{payload?.data?.body}</p>
+    </div>
+  );
+}
 
 export default function Home() {
   const [deviceToken, setdeviceToken] = useState(null);
@@ -51,8 +63,8 @@ export default function Home() {
 
             // When your app is in the foreground (the user is currently viewing your web page), you can receive data and notification payloads directly in the page
             onMessage(messaging, (payload) => {
-              console.log("foreground Message received. ", payload);
-              // ...
+              // console.log("foreground Message received. ", payload);
+              toast(<ToastDisplay payload={payload} />);
             });
 
             const { token } = await registerToken(messaging);
@@ -66,6 +78,7 @@ export default function Home() {
 
   return (
     <div>
+      <ToastContainer />
       <h1 className={styles.title}>Push Notification Test</h1>
       <p>
         Notification permission status:{" "}
